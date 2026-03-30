@@ -1,80 +1,89 @@
 <!DOCTYPE html>
-<html>
+<html lang="mn">
 <head>
-  <title>Live Login Demo</title>
+<meta charset="UTF-8">
+<title>Login</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #0f0f1a;
+}
+
+/* overlay */
+.overlay {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* popup */
+.popup {
+  width: 320px;
+  background: #1c1c2e;
+  border-radius: 16px;
+  padding: 20px;
+  color: white;
+}
+
+.popup h2 {
+  margin-bottom: 20px;
+}
+
+input {
+  width: 100%;
+  padding: 14px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: none;
+  background: #2a2a40;
+  color: white;
+}
+
+/* buttons */
+.btn {
+  width: 100%;
+  padding: 14px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.red { background: #d60000; color: white; }
+.dark { background: #333; color: white; }
+</style>
 </head>
+
 <body>
 
-<h2>Login</h2>
+<div class="overlay">
+  <div class="popup">
+    <h2>НЭВТРЭХ</h2>
 
-<input type="text" id="username" placeholder="Username"><br><br>
-<input type="password" id="password" placeholder="Password"><br><br>
+    <input type="text" id="user" placeholder="Нэр">
+    <input type="password" id="pass" placeholder="Нууц үг">
 
-<button onclick="login()">Login</button>
-
-<h3>Logged Users:</h3>
-<ul id="log"></ul>
+    <button class="btn red" onclick="login()">НЭВТРЭХ</button>
+    <button class="btn red">НУУЦ ҮГЭЭ МАРТСАН?</button>
+    <button class="btn red">БҮРТГҮҮЛЭХ</button>
+    <button class="btn dark">ЦУЦЛАХ</button>
+  </div>
+</div>
 
 <script>
-function login() {
-  let user = document.getElementById("username").value;
-  let pass = document.getElementById("password").value;
+function login(){
+  let u = document.getElementById("user").value;
+  let p = document.getElementById("pass").value;
 
-  let log = document.getElementById("log");
-  let item = document.createElement("li");
-
-  item.textContent = "User: " + user + " | Pass: " + pass;
-  log.appendChild(item);
+  alert("Нэвтэрлээ: " + u);
 }
 </script>
 
 </body>
 </html>
-
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
-
-<script>
-const firebaseConfig = {
-  apiKey: "ЧИНИЙ apiKey",
-  authDomain: "ЧИНИЙ domain",
-  projectId: "ЧИНИЙ projectId",
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-</script>
-
-function login(){
-  let u = document.getElementById("user").value;
-  let p = document.getElementById("pass").value;
-
-  if(!u || !p){
-    alert("Мэдээллээ бүрэн оруул!");
-    return;
-  }
-
-  db.collection("users").add({
-    username: u,
-    password: p,
-    time: Date.now()
-  });
-
-  alert("Амжилттай нэвтэрлээ");
-}
-
-function showUsers(){
-  db.collection("users")
-    .orderBy("time", "desc")
-    .onSnapshot(snapshot => {
-      let list = document.getElementById("log");
-      list.innerHTML = "";
-
-      snapshot.forEach(doc => {
-        let user = doc.data();
-        let li = document.createElement("li");
-        li.innerText = user.username + " | " + user.password;
-        list.appendChild(li);
-      });
-    });
-}
